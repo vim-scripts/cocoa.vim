@@ -1,0 +1,18 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2674
+
+Cocoa.vim is a collection of scripts designed to make it easier to develop Cocoa/Objective-C applications. It includes enhanced syntax highlighting, code completion, documentation lookup, as well as a number of other features that can be used to integrate Vim with Xcode, allowing you to essentially replace Xcode's editor with Vim.
+
+This plugin includes the following features:
+	1. Enhanced syntax highlighting  Vim's syntax highlighting for Objective-C seemed incomplete to me, so I have added a few niceties, such as highlighting Cocoa keywords and differentiating the method name and passed objects in method calls and definitions. You can see a before & after screenshot here: http://imgur.com/AGpoL.png
+	2. Xcode-like mappings (where convenient)  mappings such as ⌘R to build & run and ⌘0 to switch to the project window (provided you are using a GUI such as MacVim) as well as many others help to integrate Xcode and Vim.
+	3. Methods, functions, and #pragma marks for the current file can be listed and navigated to with the :ListMethods command.
+	4. A template of methods declared in a header file (.h) can be built in an implementation file (.m) with :BuildMethods.
+	5. Cocoa and C Documentation can be looked up with the :CocoaDoc command, or with Vim's K.
+	6. Code completion for classes, methods, functions, constants, types, and notifications can be invoked with <c-x><c-o>. Parameters for methods and functions are automatically converted to snippets to <tab> over if snipMate is installed.
+
+Although cocoa.vim is usable, it is still very much in the beta stage. In particular, code completion still needs much work to match Xcode's editor. Also, if anyone has suggestions as for how to add breakpoints or lookup header definitions from within Vim I would very much appreciate it.
+
+Bug reports can be submitted on the issue tracker: http://code.google.com/p/cocoa-dot-vim/issues/list
+Development can be followed on GitHub: http://github.com/msanders/cocoa.vim
+
+Hope you find it useful!
