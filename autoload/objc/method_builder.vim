@@ -5,6 +5,7 @@
 "               it looks for the corresponding header file of the current *.m
 "               file (e.g. "foo.m" -> "foo.h").
 " Last Updated: June 03, 2009
+"       - make sure you're not in a comment
 
 " TODO: Relative pathnames
 fun objc#method_builder#Completion(ArgLead, CmdLine, CursorPos)

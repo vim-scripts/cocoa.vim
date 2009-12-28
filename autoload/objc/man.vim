@@ -1,8 +1,8 @@
 " File:         objc#man.vim (part of the cocoa.vim plugin)
 " Author:       Michael Sanders (msanders42 [at] gmail [dot] com)
 " Description:  Allows you to look up Cocoa API docs in Vim.
-" Last Updated: June 30, 2009
-" NOTE:         See http://mymacinations.com/2008/02/06/changing-the-systems-default-settings-for-html-files-safe/
+" Last Updated: December 26, 2009
+" NOTE:         See http://tinyurl.com/remove-annoying-alert
 "               for removing the annoying security alert in Leopard.
 
 " Return all matches in for ":CocoaDoc <tab>" sorted by length.
@@ -12,10 +12,17 @@ fun objc#man#Completion(ArgLead, CmdLine, CursorPos)
 endf
 
 let s:docsets =  []
-for path in ['/Developer/Documentation/DocSets/com.apple.ADC_Reference_Library.CoreReference.docset',
-           \ '/Developer/Platforms/iPhoneOS.platform/Developer/Documentation/DocSets/com.apple.adc.documentation.AppleiPhone2_0.iPhoneLibrary.docset']
-	if isdirectory(path)
-		call add(s:docsets, path)
+let locations = [
+			\	{'path': '/Developer/Documentation/DocSets/com.apple.ADC_Reference_Library.CoreReference.docset',
+			\	'alias': 'Leopard'},
+			\	{'path': '/Developer/Documentation/DocSets/com.apple.adc.documentation.AppleSnowLeopard.CoreReference.docset',
+			\	'alias': 'Snow Leopard'},
+			\	{'path': '/Developer/Platforms/iPhoneOS.platform/Developer/Documentation/DocSets/com.apple.adc.documentation.AppleiPhone3_0.iPhoneLibrary.docset',
+			\	'alias': 'iPhone 3.0'}
+			\	]
+for location in locations
+	if isdirectory(location.path)
+		call add(s:docsets, location)
 	endif
 endfor
 
@@ -25,9 +32,18 @@ fun s:OpenFile(file)
 	if a:file =~ '/.*/man/'
 		exe ':!'.substitute(&kp, '^man -s', 'man', '').' '.a:file
 	else
-		" /usr/bin/open strips the #fragments in file:// URLs, which we need,
-		" so I'm using applescript instead.
-		call system('osascript -e ''open location "file://'.a:file.'"'' &')
+		" Sometimes Xcode doesn't download a bundle fully, and docsetutil is
+		" inaccurate.
+		if !filereadable(matchstr(a:file, '^.*\ze#.*$'))
+			echoh ErrorMsg
+			echom 'File "'.a:file.'" is not readable.'
+			echom 'Check that Xcode has fully downloaded the DocSet.'
+			echoh None
+		else
+			" /usr/bin/open strips the #fragments in file:// URLs, which we need,
+			" so I'm using applescript instead.
+			call system('osascript -e ''open location "file://'.a:file.'"'' &')
+		endif
 	endif
 endf
 
@@ -51,7 +67,8 @@ fun objc#man#ShowDoc(...)
 	let references = {}
 
 	" First check Cocoa docs for word using docsetutil
-	for docset in s:docsets
+	for location in s:docsets
+		let docset = location.path
 		let response = split(system(s:docset_cmd.word.' '.docset), "\n")
 		let docset .= '/Contents/Resources/Documents/' " Actual path of files
 		for line in response
@@ -61,9 +78,9 @@ fun objc#man#ShowDoc(...)
 			if has_key(references, path) | continue | endif " Ignore duplicate entries
 
 			let [lang, type, class] = split(matchstr(line, '^ \zs*\S*'), '/')[:2]
-			" If no class if given use type instead
+			" If no class is given use type instead
 			if class == '-' | let class = type | endif
-			let references[path] = {'lang': lang, 'class': class}
+			let references[path] = {'lang': lang, 'class': class, 'location': location}
 		endfor
 	endfor
 
@@ -101,7 +118,7 @@ fun s:ChooseFrom(references)
 	for ref in values(a:references)
 		let class = ref.class
 		if has_key(type_abbr, class) | let class = type_abbr[class] | endif
-		call add(inputlist, i.'. '.(show_lang ? ref['lang'].' ' : '').class)
+		call add(inputlist, i.'. '.(show_lang ? ref['lang'].' ' : '').class.' ('.ref.location.alias.')')
 		let i += 1
 	endfor
 	let num = inputlist(inputlist)
