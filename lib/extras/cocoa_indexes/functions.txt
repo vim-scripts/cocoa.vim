@@ -132,6 +132,16 @@ NSIntersectsRect
 NSIsControllerMarker
 NSIsEmptyRect
 NSIsFreedObject
+NSJavaBundleCleanup
+NSJavaBundleSetup
+NSJavaClassesForBundle
+NSJavaClassesFromPath
+NSJavaNeedsToLoadClasses
+NSJavaNeedsVirtualMachine
+NSJavaObjectNamedInPath
+NSJavaProvidesClasses
+NSJavaSetup
+NSJavaSetupVirtualMachine
 NSLocationInRange
 NSLog
 NSLogPageSize
